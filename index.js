@@ -1,45 +1,42 @@
+// to run program: >npm run start
+// Program created by Blair Stringer
+
 const PORT = 8000
-const axios = require('axios')
-const cheerio = require('cheerio')
 const express = require('express')
+const path = require('path');
+const node_lib = require("./node_lib")
+var fs = require('fs')
 
 const app = express()
 const url = 'https://www.allrecipes.com/recipe/16354/easy-meatloaf/'
 
-axios(url)
-    .then(response => {
-        const html = response.data
-        const $ = cheerio.load(html)
-        const all_ingredients = []
-        const parts = []
+console.log("STARTING APP \n")
 
-        $("#article-heading_2-0", html).each(function(){
-            const recipe = $(this).text()
-            all_ingredients.push({
-                recipe
-            })
-        })
+app.use(logger)
 
-        $('.mntl-structured-ingredients__list-item', html).each(function(index){
-            // const ingredient = $(this).text()
-            // all_ingredients.push({
-            //     ingredient,
-            // })
+app.get('/static/js/recipe_collector.js', function (req, res) {
+    console.log("add.get to js file path Blair..")
+    res.sendFile(path.join(__dirname, '/static/js/recipe_collector.js'));
+  });
 
+app.get("/", (req, res) => {
+    console.log("Access through browser")
+    node_lib.ingredient_info(url, function(returnValue){
+        console.log("in main code return value: ", returnValue)
+        // res.send(returnValue)
+        var html = fs.readFileSync('./templates/homepage.html', 'utf8')
+        res.send(html)
+    })
+})
 
-            $(this).children().children().each(function(){
-                const each_part = $(this).text()
-                console.log("each_part", each_part)
-                parts.push({
-                    each_part
-                })
-            })
+app.get("/recepie_types", (req, res) => {
+    console.log("New recipy types html page")
+})
 
+function logger(req, res, next){
+    console.log("log")
+    next()
+}
 
-        })
-        console.log(all_ingredients)
-        console.log(parts)
-
-    }).catch(err => console.log(err))
 
 app.listen(PORT, () => console.log('server running on PORT', PORT) ) 
