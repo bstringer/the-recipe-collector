@@ -4,6 +4,7 @@ const cheerio = require('cheerio')
 function ingredient_info(url, callback){
 
     const all_ingredients = []
+    recipe_obj = {}
     axios(url)
         .then(response => {
             const html = response.data
@@ -39,12 +40,65 @@ function ingredient_info(url, callback){
                 ingredient,
                 quantity,
                 units
-            })            
+            })
+            create_obj(ingredient, quantity, units, recipe_obj)
             })
             all_ingredients.push(parts)
-            callback(all_ingredients)
+            console.log("recipe_obj at end of funct: ", recipe_obj);
+            console.log("all_ingredients at end of funct: ", all_ingredients);
+            callback(recipe_obj)
             
         }).catch(err => console.log(err))
+        
+}
+
+function create_obj(ingredient, quantity, units, recipe_obj){
+    if (units == ""){
+        console.log("units are empty!")
+        units = "single"
+    }
+    if (quantity == ""){
+        console.log("quantity are empty!")
+        quantity = "n/a"
+    }    
+
+    if (ingredient in recipe_obj){
+        if (units in ingredient){
+            recipe_obj[ingredient][units].push(quantity)
+        }
+        else{
+            recipe_obj[ingredient][units] = [quantity]
+        }
+    }
+    else{
+        console.log("what are units?: ", units)
+        console.log("what are quantity?: ", quantity)
+        // recipe_obj[ingredient][units] = [quantity]
+
+
+        recipe_obj[ingredient] = {
+                                [units]: [quantity]
+                            };
+    }
 }
 
 module.exports = {ingredient_info}
+
+/*  
+
+recipe_obj = {
+    ingredient1: {
+        unit_1 : ['value1', 'value2', 'value3'],
+        unit_2: ['value_1', 'value2', 'value3', 'vaue4']
+    }
+    ingredient2: {
+        unit_1 : ['value1', 'value2', 'value3'],
+        unit_2: ['value_1', 'value2', 'value3', 'vaue4']
+    }    
+    ingredient3: {
+        unit_1 : ['value1', 'value2', 'value3'],
+        unit_2: ['value_1', 'value2', 'value3', 'vaue4']
+    }    
+}
+
+*/
