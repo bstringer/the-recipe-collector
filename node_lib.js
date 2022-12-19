@@ -54,11 +54,9 @@ function ingredient_info(url, callback){
 
 function create_obj(ingredient, quantity, units, recipe_obj){
     if (units == ""){
-        console.log("units are empty!")
         units = "single"
     }
     if (quantity == ""){
-        console.log("quantity are empty!")
         quantity = "n/a"
     }    
 
@@ -71,11 +69,6 @@ function create_obj(ingredient, quantity, units, recipe_obj){
         }
     }
     else{
-        console.log("what are units?: ", units)
-        console.log("what are quantity?: ", quantity)
-        // recipe_obj[ingredient][units] = [quantity]
-
-
         recipe_obj[ingredient] = {
                                 [units]: [quantity]
                             };
@@ -86,7 +79,7 @@ module.exports = {ingredient_info}
 
 /*  
 
-recipe_obj = {
+recipe_obj_example = {
     ingredient1: {
         unit_1 : ['value1', 'value2', 'value3'],
         unit_2: ['value_1', 'value2', 'value3', 'vaue4']
